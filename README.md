@@ -52,26 +52,31 @@ The entire environment is orchestrated by the "control-workspace" directory.  Af
 ### Preparing your AWS account to leverage the doormat provider on TFC:
 
 1) navigate to the doormat-prereqs directory
+
 ```
 cd doormat-prereqs/
 ```
+
 2) paste your doormat generated AWS credentials, exporting them to your shell
+
 ```
 export AWS_ACCESS_KEY_ID=************************
 export AWS_SECRET_ACCESS_KEY=************************
 export AWS_SESSION_TOKEN=************************
+export AWS_REGION=us-east-2
 ```
+
 3) Initialize terraform
 ```
 terraform init
 ```
 4) Run a plan passing in your TFC account name
 ```
-terraform plan -var "tfc_organization=something"
+terraform plan -var "tfc_organization=demo-land"
 ```
 5) Assuming everything looks good, run an apply passing in your TFC account name 
 ```
-terraform apply -var "tfc_organization=something"
+terraform apply -var "tfc_organization=demo-land"
 ```
 
 ### Preparing your TFC account:
@@ -82,6 +87,7 @@ terraform apply -var "tfc_organization=something"
 
 | Key | Value | Sensitive? | Type |
 |-----|-------|------------|------|
+|aws_account_id|\<your AWS account ID\>|no|terraform| # Added by DFED
 |boundary_admin_password|\<intended boundary admin password\>|yes|terraform|
 |my_email|\<your email\>|no|terraform|
 |nomad_license|\<your nomad ent license\>|yes|terraform|
@@ -114,15 +120,26 @@ cd packer/
 export AWS_ACCESS_KEY_ID=************************
 export AWS_SECRET_ACCESS_KEY=************************
 export AWS_SESSION_TOKEN=************************
+export AWS_REGION=us-east-2
 ```
-3) export your HCP_CLIENT_ID and HCP_CLIENT_SECRET to your shell
+3) export your HCP_CLIENT_ID and HCP_CLIENT_SECRET and HCP_PROJECT_ID to your shell
+Create a project-level service principal in HCP and export the following variables to your shell:
+
 ```
-export HCP_CLIENT_ID=************************                                    
+export HCP_CLIENT_ID=************************         
 export HCP_CLIENT_SECRET=************************
+export HCP_PROJECT_ID=************************
 ```
-4) Trigger a packer build specifying a pre-existing, publicly accesible subnet of your AWS account for build to happen within
+1) Trigger a packer build specifying a pre-existing, publicly accesible subnet of your AWS account for build to happen within
+
+This will build a packer image and place the image ID in the HCP Packer registry.  The image ID will be used by the "nomad-cluster" workspace to provision the Nomad server cluster.  We have to have a pre-existing packer registry created in your existing Project. 
+
+Also as a prerequisite, you will need a packer version >= v1.9.3
+as creating service principals in a project is only supported in this version and above.  You can download the latest version of packer here: https://www.packer.io/downloads
+
+(Version that works: 1.9.4)
 ```
-packer build -var "subnet_id=subnet-xxxxxxxxxxxx" ubuntu.pkr.hcl
+packer build -var "subnet_id=subnet-xxxx" ubuntu.pkr.hcl
 ```
 
 ## Triggering the deployment
@@ -131,7 +148,10 @@ Now comes the easy part, simply trigger a run on "0_control-workspace" and watch
 
 Once the run is complete, you can access each tool by:
 - **HCP Consul**: Navigate to the cluster in HCP and generate a root token
+
 - **HCP Vault**: Navigate to the cluster in HCP and generate a root token
+
+
 - **HCP Boundary**: Navigate to the cluster in HCP or via the Desktop app:
   - *username*: admin
   - *password*: this is whatever you set in the variable set
