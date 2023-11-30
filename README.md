@@ -40,10 +40,11 @@ The entire environment is orchestrated by the "control-workspace" directory.  Af
 
 ## Prerequisites
 
-- You need a doormat created AWS sandbox account
-- You need a HCP account with an organization scoped service principal
-- You need a TFC account and a TFC user token 
-- You need a pre-configured OAuth connection between TFC and GitHub
+- Doormat created [AWS sandbox account](https://docs.prod.secops.hashicorp.services/doormat/aws/create_individual_sandbox_account/)
+- [Onboard TFC organization to Doormat](https://docs.prod.secops.hashicorp.services/doormat/tf_provider/)
+- HCP account with an [organization scoped service principal](https://developer.hashicorp.com/hcp/docs/hcp/admin/iam/service-principals)
+- TFC account and a [TFC user token](https://developer.hashicorp.com/terraform/cloud-docs/users-teams-organizations/api-tokens#user-api-tokens)
+- Pre-configured OAuth connection between [TFC and GitHub](https://developer.hashicorp.com/terraform/cloud-docs/vcs/github)
 
 ### Preparing your HCP Packer Registry
 
