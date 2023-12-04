@@ -156,6 +156,7 @@ Once the run is complete, you can access each tool by:
 - **HCP Boundary**: Navigate to the cluster in HCP or via the Desktop app:
   - *username*: admin
   - *password*: this is whatever you set in the variable set
+  
 - **Nomad Ent**: The "5_nomad-cluster" workspace will have an output containing the public ALB endpoint to access the Nomad UI.  The Admin token for this can be retrieved from Vault using
 ```
 vault kv get -mount=hashistack-admin/ nomad_bootstrap/SecretID

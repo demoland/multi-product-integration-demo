@@ -6,11 +6,14 @@ terraform {
   }
 }
 
+# Organization Name:
 variable "tfc_organization" {
   type    = string
+  description = "value of the organization name in TFC"
   default = ""
 }
 
+# The following workspaces are the workspaces to create a doormat assume role for. 
 variable "tfc_workspace_names" {
   type    = set(string)
   default = ["1_networking", "5_nomad-cluster", "4_boundary-config", "6_nomad-nodes", "7_workload"]
@@ -30,6 +33,8 @@ resource "aws_iam_role" "doormat_role" {
   }
 }
 
+# The following role allows the doormat service user to manipulate roles in 
+# the "org/workspace" account.  This is required for the doormat service user. 
 data "aws_iam_policy_document" "doormat_assume" {
   statement {
     actions = [
